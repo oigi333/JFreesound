@@ -4,7 +4,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import org.junit.Before;
 import org.junit.Test;
-import pl.michalwa.freesoundclient.Freesound;
+import pl.michalwa.jfreesound.Freesound;
+import pl.michalwa.jfreesound.request.SimpleRequest;
+
+import static org.junit.Assert.*;
 
 public class FreesoundTest
 {
@@ -14,24 +17,23 @@ public class FreesoundTest
 	@Before
 	public void setup()
 	{
-		readConfig();
-		freesound = Freesound.builder()
-		 		.withToken(token)
-				.build();
+		// Read the configuration
+		Reader reader = new InputStreamReader(getClass().getResourceAsStream("/config.json"));
+		JsonObject config = new JsonParser().parse(reader).getAsJsonObject();
+		token = config.get("token").getAsString();
+		
+		// Build the test object
+		freesound = Freesound.builder().token(token).build();
 	}
 	
 	@Test
 	public void simpleRequestTest()
 	{
-		JsonObject json = freesound.makeRequest("https://freesound.org/apiv2/sounds/1234/");
-		System.out.println(json.toString());
-	}
-	
-	private void readConfig()
-	{
-		Reader reader = new InputStreamReader(getClass().getResourceAsStream("/config.json"));
-		JsonObject config = new JsonParser().parse(reader).getAsJsonObject();
+		JsonObject response = freesound.request(new SimpleRequest("sounds", 1234), null);
 		
-		token = config.get("token").getAsString();
+		assertNotNull(response);
+		assertEquals(1234,                   response.get("id").getAsInt());
+		assertEquals("180404D.mp3",          response.get("name").getAsString());
+		assertEquals("Traveling drum sound", response.get("description").getAsString());
 	}
 }
