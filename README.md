@@ -13,3 +13,8 @@ format:
     "token": "YOUR_API_TOKEN"
 }
 ```
+
+### Libraries
+**JFreesound** uses the following open-source libraries:
+  + [Apache HttpClient v4.5.5](https://hc.apache.org/httpcomponents-client-4.5.x/) licensed under [Apache License 2.0](http://www.apache.org/licenses/)
+  + [Gson v2.8.4](https://github.com/google/gson) licensed under [Apache License 2.0](https://github.com/google/gson/blob/master/LICENSE)

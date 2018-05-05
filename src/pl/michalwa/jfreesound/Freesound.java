@@ -99,7 +99,7 @@ public class Freesound
 		
 		/** Uses the given HttpClient to make http requests
 		 * to the API instead of the default one. */
-		public Builder useHttpClient(HttpClient http)
+		public Builder withHttpClient(HttpClient http)
 		{
 			this.http = http;
 			return this;
@@ -107,7 +107,7 @@ public class Freesound
 		
 		/** Uses the given JsonParser to parse API
 		 * responses instead of the default one. */
-		public Builder useJsonParser(JsonParser json)
+		public Builder withJsonParser(JsonParser json)
 		{
 			this.json = json;
 			return this;
@@ -116,9 +116,12 @@ public class Freesound
 		/** Builds the API client instance */
 		public Freesound build()
 		{
+			// Required parameters
 			if(token == null) throw new IllegalStateException("Token cannot be null.");
-			if(http == null) http = HttpClientBuilder.create().build();
-			if(json == null) json = new JsonParser();
+			
+			// Optional parameters
+			http = Optional.ofNullable(http).orElseGet(() -> HttpClientBuilder.create().build());
+			json = Optional.ofNullable(json).orElseGet(JsonParser::new);
 			
 			return new Freesound(token, http, json);
 		}
