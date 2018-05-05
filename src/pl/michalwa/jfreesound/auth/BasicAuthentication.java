@@ -3,7 +3,7 @@ package pl.michalwa.jfreesound.auth;
 import org.apache.http.client.methods.HttpGet;
 
 /** The basic authentication mechanism using an access token */
-public class BasicAuthentication implements Authentication
+public class BasicAuthentication extends Authentication
 {
 	/** The API token used for authentication */
 	private String token;
@@ -16,7 +16,7 @@ public class BasicAuthentication implements Authentication
 	}
 	
 	@Override
-	public void processRequest(HttpGet request)
+	public void process(HttpGet request)
 	{
 		request.setHeader("Authorization", "Token " + token);
 	}

@@ -100,6 +100,13 @@ public class Freesound
 			return this;
 		}
 		
+		/** Uses a custom authentication mechanism */
+		public Builder withAuthentication(Authentication auth)
+		{
+			this.auth = auth;
+			return this;
+		}
+		
 		/** Uses the given HttpClient to make http requests
 		 * to the API instead of the default one. */
 		public Builder withHttpClient(HttpClient http)
