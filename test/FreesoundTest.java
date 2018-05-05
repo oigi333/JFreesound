@@ -23,7 +23,7 @@ public class FreesoundTest
 		token = config.get("token").getAsString();
 		
 		// Build the test object
-		freesound = Freesound.builder().token(token).build();
+		freesound = Freesound.builder().withToken(token).build();
 	}
 	
 	@Test

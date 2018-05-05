@@ -3,7 +3,6 @@ package pl.michalwa.jfreesound.request;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
 import pl.michalwa.jfreesound.Freesound;
 
 /** The base interface of all requests that can
@@ -12,7 +11,7 @@ import pl.michalwa.jfreesound.Freesound;
 public abstract class Request
 {
 	/** Builds the HTTP request. */
-	public HttpUriRequest httpRequest()
+	public HttpGet httpRequest()
 	{
 		return new HttpGet(Freesound.API_BASE_URL + url());
 	}

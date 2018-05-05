@@ -10,9 +10,13 @@ import java.util.function.Consumer;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import pl.michalwa.jfreesound.auth.Authentication;
+import pl.michalwa.jfreesound.auth.BasicAuthentication;
 import pl.michalwa.jfreesound.request.Request;
 
 /** The main API client class. Used to make requests and retriev
@@ -24,17 +28,17 @@ public class Freesound
 	 * Used by the {@link Request} class to construct request URLs. */
 	public static final String API_BASE_URL = "https://freesound.org/apiv2/";
 	
-	/** The API secret access token */
-	private String token;
+	/** The authentication mechanism used in API requests */
+	private Authentication auth;
 	/** The HttpClient used to make requests to the API */
 	private HttpClient http;
 	/** The parser used to parse json responses from the API */
 	private JsonParser json;
 	
 	/** Constructs the API client */
-	private Freesound(String token, HttpClient http, JsonParser json)
+	private Freesound(Authentication auth, HttpClient http, JsonParser json)
 	{
-		this.token = token;
+		this.auth = auth;
 		this.http = http;
 		this.json = json;
 	}
@@ -44,8 +48,8 @@ public class Freesound
 	public JsonObject request(Request request) throws IOException
 	{
 		// Prepare the request
-		HttpUriRequest httpRequest = request.httpRequest();
-		httpRequest.setHeader("Authorization", "Token " + token);
+		HttpGet httpRequest = request.httpRequest();
+		auth.processRequest(httpRequest);
 		
 		// Execute the request
 		HttpResponse response = http.execute(httpRequest);
@@ -85,15 +89,14 @@ public class Freesound
 	public static class Builder
 	{
 		/* These fields hold the contructor arguments */
-		private String token = null;
+		private Authentication auth = null;
 		private HttpClient http = null;
 		private JsonParser json = null;
 		
-		/** Sets the Freesound API token. Required
-		 * to build a Freesound instance. */
-		public Builder token(String token)
+		/** Uses the {@link BasicAuthentication} with the given token. */
+		public Builder withToken(String token)
 		{
-			this.token = token;
+			this.auth = new BasicAuthentication(token);
 			return this;
 		}
 		
@@ -117,13 +120,13 @@ public class Freesound
 		public Freesound build()
 		{
 			// Required parameters
-			if(token == null) throw new IllegalStateException("Token cannot be null.");
+			if(auth == null) throw new IllegalStateException("Authentication type must be set.");
 			
 			// Optional parameters
 			http = Optional.ofNullable(http).orElseGet(() -> HttpClientBuilder.create().build());
 			json = Optional.ofNullable(json).orElseGet(JsonParser::new);
 			
-			return new Freesound(token, http, json);
+			return new Freesound(auth, http, json);
 		}
 	}
 }
