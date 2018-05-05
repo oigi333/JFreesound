@@ -25,12 +25,5 @@ public abstract class Authentication
 		request.setURI(uri);
 	}
 	
-	/** Adds a GET parameter to the request being processed.
-	 * Meant to be used in {@link Authentication#process(HttpGet)}. */
-	protected void addParameter(String name, Object value)
-	{
-		uriBuilder.addParameter(name, value.toString());
-	}
-	
 	protected abstract void process(HttpGet request);
 }
